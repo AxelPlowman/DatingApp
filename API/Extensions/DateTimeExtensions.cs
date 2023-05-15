@@ -1,0 +1,22 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace API.Extensions
+{
+    public static class DateTimeExtensions
+    {
+        public static int CalculateAge(this DateOnly dob)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - dob.Year;
+
+            if (dob > today.AddDays(-age)) age--; // if person has not yet had their birthday, make age one year less.
+
+            // Note: we have not accounted for leap years. This is only rougly accurate.
+
+            return age;
+        }
+    }
+}
