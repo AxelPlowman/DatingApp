@@ -46,7 +46,7 @@ export class ErrorInterceptor implements HttpInterceptor {
               this.router.navigateByUrl('/server-error', navigationExtras);
               break;
             default:
-              this.toastr.error('Something unexpected happened... A highly trained team of monkeys has been dispatched to deal with this situation.');
+              this.toastr.error('Something unexpected happened... A team of highly trained monkeys has been dispatched to deal with this situation.');
               console.error(error);
               break;
           }

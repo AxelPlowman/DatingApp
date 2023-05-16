@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using API.DTOs;
 using API.Interfaces;
 using AutoMapper;
@@ -29,5 +31,21 @@ public class UsersController : BaseApiController
     public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
         return await _userRepository.GetMembersAsync(username);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var user = await _userRepository.GetUserByUsernameAsync(username);
+        if (user == null) return NotFound();
+
+        _mapper.Map(memberUpdateDto, user);
+
+        if (await _userRepository.SaveAllAsync()) return NoContent();
+        // NoContent is the correct response for a succesful HttpPut. The 204 response says 
+        // "Everyting's okay, but I have nothing more to send back to you."
+
+        return BadRequest("Failed to update user");
     }
 }

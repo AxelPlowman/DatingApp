@@ -15,8 +15,12 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseCors(builder => builder.AllowAnyHeader().WithOrigins("https://localhost:4200"));
+// NOTE: the WithMethods method has been added by myself in order to put my browser to rest.
+// If the allowed methods were not explicitly mentioned, I would get CORS errors in both Firefox and Chrome.
+app.UseCors(builder => builder
+    .AllowAnyHeader()
+    .WithMethods("PUT", "DELETE", "GET", "OPTIONS")
+    .WithOrigins("https://localhost:4200"));
 
 app.UseAuthentication(); // "Do you have a valid token?"
 app.UseAuthorization(); // "Does this token authorize you to get access?"
