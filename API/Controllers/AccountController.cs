@@ -47,13 +47,17 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain)?.Url
             };
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(usr => usr.UserName.ToLower() == loginDto.Username.ToLower());
+            var user = await _context.Users
+            .Include(u => u.Photos) // if we don't inlcude the related Photos, it will not be loaded: 
+            // EntityFramework will not load related entities if not explicitly asked.
+            .SingleOrDefaultAsync(u => u.UserName.ToLower() == loginDto.Username.ToLower());
 
             if (user == null) return Unauthorized("invalid username");
 
@@ -69,6 +73,7 @@ namespace API.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain)?.Url
             };
         }
 
